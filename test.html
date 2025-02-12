@@ -3,41 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORS Request Sender</title>
+    <title>CORS Request Tester</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        textarea, input, select, button { width: 100%; margin-top: 10px; padding: 10px; }
-        pre { background: #f4f4f4; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h2 {
+            text-align: center;
+            color: #0078D4;
+        }
+        textarea, input, select, button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #0078D4;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #005A9E;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
-    <h2>CORS Request Tester</h2>
-    <label>Request URL:</label>
-    <input type="text" id="url" placeholder="Enter URL">
-    
-    <label>Method:</label>
-    <select id="method">
-        <option>GET</option>
-        <option>POST</option>
-        <option>PUT</option>
-        <option>DELETE</option>
-        <option>PATCH</option>
-    </select>
-    
-    <label>Headers (JSON format):</label>
-    <textarea id="headers" placeholder='{"Content-Type": "application/json"}'></textarea>
-    
-    <label>Body (for POST/PUT/PATCH requests):</label>
-    <textarea id="body"></textarea>
-    
-    <label>
-        <input type="checkbox" id="withCredentials"> Include Credentials (cookies)
-    </label>
-    
-    <button onclick="sendRequest()">Send Request</button>
-    
-    <h3>Response:</h3>
-    <pre id="response"></pre>
+    <div class="container">
+        <h2>CORS Request Tester</h2>
+        <label>Request URL:</label>
+        <input type="text" id="url" placeholder="Enter URL">
+        
+        <label>Method:</label>
+        <select id="method">
+            <option>GET</option>
+            <option>POST</option>
+            <option>PUT</option>
+            <option>DELETE</option>
+            <option>PATCH</option>
+            <option>OPTIONS</option>
+        </select>
+        
+        <label>Headers (JSON format):</label>
+        <textarea id="headers" placeholder='{"Content-Type": "application/json"}'></textarea>
+        
+        <label>Body (for POST/PUT/PATCH requests):</label>
+        <textarea id="body"></textarea>
+        
+        <label>
+            <input type="checkbox" id="withCredentials"> Include Credentials (cookies)
+        </label>
+        
+        <label>
+            <input type="checkbox" id="spoofOrigin"> Spoof Origin Header
+        </label>
+        
+        <button onclick="sendRequest()">Send Request</button>
+        
+        <h3>Response:</h3>
+        <pre id="response"></pre>
+    </div>
     
     <script>
         async function sendRequest() {
@@ -46,6 +99,7 @@
             let headers = {};
             let body = null;
             const withCredentials = document.getElementById('withCredentials').checked;
+            const spoofOrigin = document.getElementById('spoofOrigin').checked;
             
             try {
                 headers = JSON.parse(document.getElementById('headers').value || '{}');
@@ -56,6 +110,12 @@
             
             if (["POST", "PUT", "PATCH"].includes(method) && document.getElementById('body').value) {
                 body = document.getElementById('body').value;
+            }
+            
+            if (spoofOrigin) {
+                headers["Origin"] = "https://evil.com";
+                headers["Referer"] = "https://evil.com";
+                headers["X-Forwarded-For"] = "127.0.0.1";
             }
             
             try {
