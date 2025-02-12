@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,100 +6,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CORS-ER</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        h1, h2 {
-            text-align: center;
-            color: #0078D4;
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+        /* Left Section: Request Form */
+        .request-section {
+            width: 40%;
+            padding: 40px;
+            background: #2a2a2a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
         }
 
         label {
-            font-weight: bold;
+            font-size: 1.2rem;
+            color: #ddd;
+            margin-bottom: 8px;
         }
 
         input[type="text"], textarea {
             width: 100%;
-            margin: 8px 0;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1rem;
-            box-sizing: border-box;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: #333;
+            color: white;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: #00aaff;
+            outline: none;
         }
 
         textarea {
-            resize: vertical;
+            height: 150px;
+            resize: none;
+        }
+
+        .checkbox-container {
+            margin: 20px 0;
+        }
+
+        .checkbox-container input {
+            margin-right: 10px;
         }
 
         button {
-            display: block;
             width: 100%;
-            padding: 12px 20px;
-            font-size: 1rem;
-            color: #fff;
-            background-color: #0078D4;
+            padding: 16px;
+            font-size: 1.2rem;
+            background: #00aaff;
             border: none;
-            border-radius: 4px;
+            color: white;
+            border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #005A9E;
+            background-color: #0088cc;
         }
 
-        .checkbox-container {
-            margin: 10px 0;
+        /* Right Section: Response */
+        .response-section {
+            width: 60%;
+            padding: 25px;
+            background: #ffffff;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .response-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
         }
 
         #responseDisplay {
-            background: #f1f1f1;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 4px;
-            white-space: pre-wrap; /* Preserve line breaks, but wrap text */
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 10px;
+            min-height: 300px;
+            height: auto;
             font-family: "Courier New", Courier, monospace;
-            font-size: 0.9rem;
-            overflow-wrap: break-word;  /* Ensure long words break correctly */
-            word-wrap: break-word;      /* Legacy support for older browsers */
+            font-size: 1rem;
+            color: #444;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            margin-top: 15px;
+            word-break: break-word;
         }
 
         footer {
-            margin-top: 20px;
             text-align: center;
-            font-size: 0.9rem;
-            color: #777;
+            margin-top: 20px;
+            color: #888;
         }
 
         footer a {
-            color: #0078D4;
+            color: #00aaff;
             text-decoration: none;
         }
 
         footer a:hover {
             text-decoration: underline;
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .request-section, .response-section {
+                width: 100%;
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>CORS Tester</h1>
+    <!-- Left Section: Request Form -->
+    <div class="request-section">
+        <h1>CORS Tester</h1>
 
-    <div class="container">
         <!-- Input for URL -->
         <label for="urlInput">Request URL:</label>
         <input type="text" id="urlInput" placeholder="Enter the URL to test" value="https://example.com">
@@ -109,7 +166,7 @@
 
         <!-- Textarea for POST data -->
         <label for="postDataInput">POST Data (JSON format):</label>
-        <textarea id="postDataInput" rows="4" placeholder='{"key":"value"}'></textarea>
+        <textarea id="postDataInput" placeholder='{"key":"value"}'></textarea>
 
         <!-- Checkbox for credentials -->
         <div class="checkbox-container">
@@ -120,13 +177,12 @@
 
         <!-- Button to send request -->
         <button onclick="sendCustomRequest()">Send Request</button>
-
-        <h2>Response</h2>
-        <div id="responseDisplay">Waiting for response...</div>
     </div>
 
-    <footer>
-    </footer>
+    <!-- Right Section: Response -->
+    <div class="response-section">
+        <div id="responseDisplay">Waiting for response...</div>
+    </div>
 
     <script>
         async function sendCustomRequest() {
